@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="margin: auto; background: none; display: block; shape-rendering: auto;" width="201px" height="201px" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid">
+<defs>
+  <clipPath id="progress-ixi6hacaaom-cp" x="0" y="0" width="100" height="100">
+    <rect x="0" y="0" width="0" height="100">
+      <animate attributeName="width" repeatCount="indefinite" dur="0.7246376811594202s" values="0;100;100" keyTimes="0;0.5;1"></animate>
+      <animate attributeName="x" repeatCount="indefinite" dur="0.7246376811594202s" values="0;0;100" keyTimes="0;0.5;1"></animate>
+    </rect>
+  </clipPath>
+</defs>
+<path fill="none" stroke="#2e2b3a" stroke-width="1.31" d="M8.131300000000001 36.155L91.8687 36.155A7.4763 7.4763 0 0 1 99.345 43.6313L99.345 56.3687A7.4763 7.4763 0 0 1 91.8687 63.845L8.131300000000001 63.845A7.4763 7.4763 0 0 1 0.6550000000000011 56.3687L0.6550000000000011 43.6313A7.4763 7.4763 0 0 1 8.131300000000001 36.155 Z"></path>
+<path fill="#ee1a78" clip-path="url(#progress-ixi6hacaaom-cp)" d="M8.131300000000001 38.71L91.86869999999999 38.71A4.9213000000000005 4.9213000000000005 0 0 1 96.78999999999999 43.6313L96.78999999999999 56.3687A4.9213000000000005 4.9213000000000005 0 0 1 91.86869999999999 61.29L8.131300000000001 61.29A4.9213000000000005 4.9213000000000005 0 0 1 3.2100000000000013 56.3687L3.2100000000000013 43.6313A4.9213000000000005 4.9213000000000005 0 0 1 8.131300000000001 38.71 Z"></path>
+</svg>

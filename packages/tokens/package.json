@@ -1,0 +1,7 @@
+{
+  "name": "@kazamaswap/tokens",
+  "license": "MIT",
+  "version": "0.0.1",
+  "description": "Tokens for KazamaSwap",
+  "main": "src/index.ts"
+}

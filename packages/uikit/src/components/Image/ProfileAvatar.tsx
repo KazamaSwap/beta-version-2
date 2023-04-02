@@ -1,0 +1,23 @@
+import React from "react";
+import styled from "styled-components";
+import BunnyPlaceholder from "../Svg/Icons/BunnyPlaceholder";
+import BackgroundImage from "./BackgroundImage";
+import { BackgroundImageProps } from "./types";
+
+const StyledProfileAvatar = styled(BackgroundImage)`
+  border-radius: 50%;
+`;
+
+const StyledBunnyPlaceholder = styled(BunnyPlaceholder)`
+  height: 100%;
+  width: 100%;
+  border-radius: 50%;
+  border: 3px solid #29304a;
+  padding: 2px;
+`;
+
+const ProfileAvatar: React.FC<React.PropsWithChildren<BackgroundImageProps>> = (props) => (
+  <StyledProfileAvatar loadingPlaceholder={<StyledBunnyPlaceholder />} {...props} />
+);
+
+export default ProfileAvatar;

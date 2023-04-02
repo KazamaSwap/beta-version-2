@@ -1,0 +1,101 @@
+name: Test
+
+on: [push]
+env:
+  NODE_OPTIONS: --max_old_space_size=4096
+
+jobs:
+  tsc:
+    runs-on: ubuntu-latest
+    name: Typescript
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: 💾 Cache Dependencies
+        uses: actions/cache@v3
+        with:
+          path: ./node_modules
+          key: ${{ runner.os }}-${{ matrix.node }}-modules-${{ hashFiles('**/yarn.lock') }}
+
+      - name: 🔨 Install Dependencies
+        run: yarn install --frozen-lockfile --ignore-engines --ignore-scripts
+
+      - name: 🧪 tsc
+        run: yarn types --noEmit
+
+  e2e:
+    runs-on: ubuntu-latest
+    name: End-to-end tests
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: 💾 Cache Dependencies
+        uses: actions/cache@v3
+        with:
+          path: ./node_modules
+          key: ${{ runner.os }}-${{ matrix.node }}-modules-${{ hashFiles('**/yarn.lock') }}
+
+      - name: 🔨 Install Dependencies
+        run: yarn install --frozen-lockfile --ignore-engines --ignore-scripts
+
+      - name: ⚗️ End-to-end tests
+        run: |
+          npx playwright install
+          npx playwright install-deps
+          yarn e2e-fixtures
+          # running with --browser=all causes failures
+          yarn e2e --browser=chromium
+          yarn e2e --browser=webkit
+          yarn e2e --browser=firefox
+        env:
+          E2E_JUMP_TO_MESSAGE_CHANNEL: jump-to-message
+          E2E_ADD_MESSAGE_CHANNEL: add-message
+          E2E_TEST_USER_1: test-user-1
+          E2E_TEST_USER_2: test-user-2
+          E2E_APP_KEY: ${{ secrets.E2E_APP_KEY }}
+          E2E_APP_SECRET: ${{ secrets.E2E_APP_SECRET }}
+          E2E_TEST_USER_1_TOKEN: ${{ secrets.E2E_TEST_USER_1_TOKEN }}
+          E2E_TEST_USER_2_TOKEN: ${{ secrets.E2E_TEST_USER_2_TOKEN }}
+          E2E_ADDITIONAL_CHANNELS: mr-channel-1, mr-channel-2, edit-message-channel, pin-message-channel
+          E2E_LONG_MESSAGE_LISTS_CHANNEL: navigate-long-message-lists
+          E2E_ATTACHMENT_SIZING_CHANNEL: attachment-sizing
+
+      - name: 🎥 Upload Artifacts
+        uses: actions/upload-artifact@v3
+        if: ${{ always() }}
+        with:
+          name: E2E_Artifacts
+          path: ./test-results
+          retention-days: 1
+
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node: [14, 16]
+    name: Test with Node ${{ matrix.node }}
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node }}
+
+      - name: 💾 Cache Dependencies
+        uses: actions/cache@v3
+        with:
+          path: ./node_modules
+          key: ${{ runner.os }}-${{ matrix.node }}-modules-${{ hashFiles('**/yarn.lock') }}
+
+      - name: 🔨 Install Dependencies & Build
+        run: yarn install --frozen-lockfile --ignore-engines
+
+      - name: 🧪 Lint and Test with ${{ matrix.node }}
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+        run: |
+          yarn lint
+          yarn coverage
+          yarn validate-translations
+
+      - name: 🧪 Validate CommonJS bundle with ${{ matrix.node }}
+        run: yarn validate-cjs

@@ -1,0 +1,4 @@
+const DELIST_COLLECTIONS = {
+}
+
+export default DELIST_COLLECTIONS

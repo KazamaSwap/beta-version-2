@@ -1,0 +1,129 @@
+import { Skeleton, Text, Flex, Button, CalculateIcon, useModal, useMatchBreakpoints } from '@kazamaswap/uikit'
+import styled from 'styled-components'
+import Balance from 'components/Balance'
+import { FlexGap } from 'components/Layout/Flex'
+import { useTranslation } from '@kazamaswap/localization'
+import { useVaultApy } from 'hooks/useVaultApy'
+import { useVaultPoolByKey } from 'state/pools/hooks'
+import { DeserializedPool, DeserializedLockedVaultUser, VaultKey } from 'state/types'
+import { MAX_LOCK_DURATION } from 'config/constants/widgetPools'
+import { getVaultPosition, VaultPosition } from 'utils/kazamaPool'
+import { VaultRoiCalculatorModal } from '../../Vault/VaultRoiCalculatorModal'
+import BaseCell, { CellContent } from './BaseCell'
+
+const AprLabelContainer = styled(Flex)`
+  &:hover {
+    opacity: 0.5;
+  }
+`
+
+interface AprCellProps {
+  pool: DeserializedPool
+}
+
+const AutoAprCell: React.FC<React.PropsWithChildren<AprCellProps>> = ({ pool }) => {
+  const { t } = useTranslation()
+  const { isMobile } = useMatchBreakpoints()
+
+  const { userData } = useVaultPoolByKey(pool.vaultKey)
+
+  const vaultPosition = getVaultPosition(userData)
+
+  const { flexibleApy, lockedApy } = useVaultApy({
+    duration:
+      vaultPosition > VaultPosition.Flexible && VaultPosition.None
+        ? +(userData as DeserializedLockedVaultUser).lockEndTime -
+          +(userData as DeserializedLockedVaultUser).lockStartTime
+        : MAX_LOCK_DURATION,
+  })
+
+  const [onPresentFlexibleApyModal] = useModal(<VaultRoiCalculatorModal pool={pool} />)
+  const [onPresentLockedApyModal] = useModal(
+    <VaultRoiCalculatorModal pool={pool} initialView={1} />,
+    true,
+    true,
+    pool.vaultKey === VaultKey.KazamaVault ? 'LockedVaultRoiCalculatorModal' : 'FlexibleSideVaultRoiCalculatorModal',
+  )
+
+    return (
+      <>
+        <BaseCell role="cell" flex={['1 0 50px', '4.5', '1 0 120px', null, '2 0 100px']}>
+          <CellContent>
+            <Text fontSize="12px" color="textSubtle" textAlign="left">
+              {t('Flexible APY')}
+            </Text>
+            {flexibleApy ? (
+              <AprLabelContainer alignItems="center" justifyContent="flex-start">
+                <Balance
+                  color="warning"
+                  fontSize={['14px', '14px', '16px']}
+                  value={parseFloat(flexibleApy)}
+                  decimals={2}
+                  unit="%"
+                  fontWeight={[600, 400]}
+                />
+                {!isMobile && (
+                  <Button
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      onPresentFlexibleApyModal()
+                    }}
+                    variant="text"
+                    width="20px"
+                    height="20px"
+                    padding="0px"
+                    marginLeft="4px"
+                  >
+                    <CalculateIcon color="textSubtle" width="20px" />
+                  </Button>
+                )}
+              </AprLabelContainer>
+            ) : (
+              <Skeleton width="80px" height="16px" />
+            )}
+          </CellContent>
+        </BaseCell>
+        <BaseCell role="cell" flex={['1 0 50px', '1 0 50px', '2 0 100px', null, '1 0 120px']}>
+          <CellContent>
+            <Text fontSize="12px" color="textSubtle" textAlign="left">
+              {t('Locked APY')}
+            </Text>
+            {lockedApy ? (
+              <AprLabelContainer alignItems="center" justifyContent="flex-start">
+                <FlexGap gap="4px" flexWrap="wrap">
+                  <Balance
+                    color="success"
+                    fontSize={['14px', '14px', '16px']}
+                    value={parseFloat(lockedApy)}
+                    decimals={2}
+                    unit="%"
+                    fontWeight={[600, 400]}
+                  />
+                  {!isMobile && (
+                    <Button
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        onPresentLockedApyModal()
+                      }}
+                      variant="text"
+                      width="20px"
+                      height="20px"
+                      padding="0px"
+                      marginLeft="4px"
+                    >
+                      <CalculateIcon color="textSubtle" width="20px" />
+                    </Button>
+                  )}
+                </FlexGap>
+              </AprLabelContainer>
+            ) : (
+              <Skeleton width="80px" height="16px" />
+            )}
+          </CellContent>
+        </BaseCell>
+      </>
+    )
+  }
+
+
+export default AutoAprCell

@@ -1,0 +1,27 @@
+import { BigNumber } from '@ethersproject/bignumber'
+
+export type Actions =
+  | { type: 'next_step' }
+  | { type: 'set_selected_nft'; collectionAddress: string; tokenId: string }
+  | { type: 'set_username'; userName: string | null }
+  | { type: 'initialize'; step: number }
+
+export interface State {
+  isInitialized: boolean
+  currentStep: number
+  selectedNft: {
+    tokenId: string
+    collectionAddress: string
+  }
+  userName: string
+  minimumKazamaRequired: BigNumber
+  allowance: BigNumber
+}
+
+export interface ContextType extends State {
+  actions: {
+    nextStep: () => void
+    setSelectedNft: (tokenId: string, collectionAddress: string) => void
+    setUserName: (userName: string) => void
+  }
+}

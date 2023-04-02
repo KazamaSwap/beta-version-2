@@ -1,0 +1,5 @@
+import { ChainId } from '@kazamaswap/sdk'
+
+export const verifyBscNetwork = (chainId: number) => {
+  return chainId === ChainId.BSC_TESTNET
+}

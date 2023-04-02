@@ -1,0 +1,11 @@
+{
+  "name": "@kazamaswap/utils",
+  "version": "0.0.1",
+  "scripts": {
+    "test": "vitest --run --globals"
+  },
+  "dependencies": {
+    "@kazamaswap/tokens": "*",
+    "@kazamaswap/sdk": "*"
+  }
+}
